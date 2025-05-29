@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import Recipe from '@/models/Recipe';
-import User from '@/models/User';
-import { ApiResponse, AuthRequest, UserStats } from '@/types';
+import Recipe from '../models/Recipe';
+import User from '../models/User';
+import { ApiResponse, AuthRequest, UserStats } from '../types';
 
 // Get user statistics
 export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<UserStats>>) => {
@@ -81,10 +81,9 @@ export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<U
       success: true,
       data: stats
     });
-
   } catch (error) {
     console.error('Error fetching user stats:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch user statistics'
     });
@@ -131,10 +130,9 @@ export const getUserProfile = async (req: AuthRequest, res: Response<ApiResponse
         }
       }
     });
-
   } catch (error) {
     console.error('Error fetching user profile:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch user profile'
     });
@@ -187,10 +185,9 @@ export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiR
         preferences: user.preferences
       }
     });
-
   } catch (error) {
     console.error('Error updating user preferences:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to update preferences'
     });
@@ -268,10 +265,9 @@ export const getDashboardData = async (req: AuthRequest, res: Response<ApiRespon
         recentRecipes
       }
     });
-
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch dashboard data'
     });

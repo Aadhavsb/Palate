@@ -130,3 +130,4 @@ backend/build/
 backend/uploads/
 backend/nul
 nul
+backend/.env.production

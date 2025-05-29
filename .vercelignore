@@ -1,0 +1,16 @@
+# Exclude backend folder from Vercel deployment
+backend/
+
+# Exclude development files
+*.log
+.env.local
+.env.development
+.env.test
+
+# Exclude build artifacts
+.next/
+dist/
+node_modules/
+
+# Exclude git
+.git/

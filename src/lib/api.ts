@@ -29,7 +29,8 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
 
 export async function apiCall<T = any>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  retries = 3
 ): Promise<ApiResponse<T>> {
   try {
     const headers = await getAuthHeaders()
@@ -37,13 +38,31 @@ export async function apiCall<T = any>(
     
     console.log('API Call:', { url, headers })
     
+    // Create an AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+    
     const response = await fetch(url, {
       ...options,
       headers: {
         ...headers,
         ...options.headers,
       },
+      signal: controller.signal,
     })
+    
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      if (response.status >= 500 && retries > 0) {
+        console.log(`Server error (${response.status}), retrying... (${retries} attempts left)`)
+        await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds
+        return apiCall<T>(endpoint, options, retries - 1)
+      }
+      
+      const errorData = await response.json().catch(() => ({ message: 'Network error' }))
+      throw new Error(errorData.message || `HTTP ${response.status}`)
+    }
 
     const data = await response.json()
     
@@ -54,11 +73,18 @@ export async function apiCall<T = any>(
         success: false,
         error: data.error || `API request failed with status ${response.status}`,
       }
-    }
-
-    return data
+    }    return data
   } catch (error) {
     console.error('API call failed:', error)
+    
+    // Handle specific error types
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      return {
+        success: false,
+        error: 'Cannot connect to server. Please check if the backend is running.',
+      }
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Network error',

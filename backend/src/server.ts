@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -36,7 +37,7 @@ app.use(helmet()); // Security headers
 app.use(compression()); // Compress responses
 app.use(limiter); // Apply rate limiting
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3002', 'http://localhost:3000'],
   credentials: true,
 }));
 app.use(morgan('combined')); // Logging

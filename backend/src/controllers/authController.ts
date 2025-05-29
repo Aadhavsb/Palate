@@ -76,7 +76,7 @@ export const register = async (req: Request, res: Response<ApiResponse>) => {
 };
 
 // Login user
-export const login = async (req: Request, res: Response<ApiResponse>): Promise<void> => {
+export const login = async (req: Request, res: Response<ApiResponse>) => {
   try {
     const { email, password } = req.body;
 

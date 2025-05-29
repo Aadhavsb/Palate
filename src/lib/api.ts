@@ -48,8 +48,7 @@ export async function apiCall<T = any>(
         ...headers,
         ...options.headers,
       },
-      signal: controller.signal,
-    })
+      signal: controller.signal,    })
     
     clearTimeout(timeoutId)
 
@@ -60,19 +59,18 @@ export async function apiCall<T = any>(
         return apiCall<T>(endpoint, options, retries - 1)
       }
       
+      console.error('API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url
+      })
+      
       const errorData = await response.json().catch(() => ({ message: 'Network error' }))
       throw new Error(errorData.message || `HTTP ${response.status}`)
     }    const data = await response.json()
     
     console.log('API Response:', { status: response.status, data })
     
-    if (!response.ok) {
-      return {
-        success: false,
-        error: data.error || `API request failed with status ${response.status}`,
-      }
-    }
-
     // Return the response in the expected ApiResponse format
     return {
       success: data.success || true,

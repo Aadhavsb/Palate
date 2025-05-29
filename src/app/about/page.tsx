@@ -9,7 +9,8 @@ export default function About() {
       icon: <Sparkles className="w-6 h-6" />,
       title: "AI-Powered Generation",
       description: "Advanced OpenAI technology analyzes your inputs to create personalized recipes tailored to your preferences."
-    },    {
+    },
+    {
       icon: <ChefHat className="w-6 h-6" />,
       title: "High-Quality Recipes",
       description: "Get detailed recipes with step-by-step instructions, cooking times, and helpful cooking tips."
@@ -24,7 +25,9 @@ export default function About() {
       title: "Global Cuisines",
       description: "Explore recipes from around the world with authentic flavors and cooking techniques."
     }
-  ]  const stats = [
+  ]
+
+  const stats = [
     { number: "200+", label: "Recipes Generated" },
     { number: "25+", label: "Cuisine Types" },
     { number: "50+", label: "Happy Users" },
@@ -83,9 +86,8 @@ export default function About() {
       <div className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Why Choose Palate?</h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Discover the features that make Palate the most advanced AI recipe generator available today.
+            <h2 className="text-3xl font-bold text-white mb-4">Why Choose Palate?</h2>            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+              Discover the features that make this AI recipe generator an exciting exploration of modern technology.
             </p>
           </div>
           
@@ -105,10 +107,9 @@ export default function About() {
 
       {/* Stats Section */}
       <div className="py-20 bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Trusted by Food Lovers</h2>
-            <p className="text-lg text-gray-400">Join thousands of users who have discovered their culinary passion with Palate.</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4">Project Statistics</h2>
+            <p className="text-lg text-gray-400">See what this student project has accomplished so far.</p>
           </div>
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
@@ -120,58 +121,25 @@ export default function About() {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Team Section */}
-      <div className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Meet Our Team</h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Our diverse team of culinary experts, technologists, and designers work together to bring you the best recipe generation experience.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member, index) => (              <div key={index} className="bg-gray-800 p-6 rounded-lg border border-gray-700 text-center">
-                <Image 
-                  src={member.image} 
-                  alt={member.name}
-                  width={96}
-                  height={96}
-                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                />
-                <h3 className="text-xl font-semibold text-white mb-1">{member.name}</h3>
-                <p className="text-orange-500 mb-3">{member.role}</p>
-                <p className="text-gray-400">{member.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Values Section */}
+      </div>      {/* Values Section */}
       <div className="py-20 bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Our Values</h2>
-            <p className="text-lg text-gray-400">The principles that guide everything we do at Palate.</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4">Project Principles</h2>
+            <p className="text-lg text-gray-400">The principles that guide this student project.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <Shield className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-3">Safety First</h3>
-              <p className="text-gray-400">
-                We prioritize food safety and accurate allergen information in every recipe we generate.
+              <h3 className="text-xl font-semibold text-white mb-3">Safety First</h3>              <p className="text-gray-400">
+                This project prioritizes food safety and accurate allergen information in every recipe generated.
               </p>
             </div>
             
             <div className="text-center">
               <Users className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-3">Inclusive Cooking</h3>
-              <p className="text-gray-400">
-                Our platform accommodates all dietary preferences, skill levels, and cultural backgrounds.
+              <h3 className="text-xl font-semibold text-white mb-3">Inclusive Cooking</h3>              <p className="text-gray-400">
+                The platform accommodates all dietary preferences, skill levels, and cultural backgrounds.
               </p>
             </div>
             
@@ -189,9 +157,8 @@ export default function About() {
       {/* CTA Section */}
       <div className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Cooking?</h2>
-          <p className="text-lg text-gray-400 mb-8">
-            Join our community of food enthusiasts and discover your next favorite recipe today.
+          <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Cooking?</h2>          <p className="text-lg text-gray-400 mb-8">
+            Explore this AI-powered recipe generator and discover your next favorite recipe.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 

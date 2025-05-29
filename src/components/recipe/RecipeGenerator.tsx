@@ -64,7 +64,7 @@ export default function RecipeGenerator() {
       const { getSession } = await import('next-auth/react')
       const session = await getSession()
       
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
       const formData = new FormData()
       
       if (inputType === 'text') {
@@ -79,9 +79,7 @@ export default function RecipeGenerator() {
       const headers: Record<string, string> = {}
       if (session?.user?.email) {
         headers['X-User-Email'] = session.user.email
-      }
-
-      const response = await fetch(`${API_BASE_URL}/recipes/generate`, {
+      }      const response = await fetch(`${API_BASE_URL}/api/recipes/generate`, {
         method: 'POST',
         headers,
         body: formData,

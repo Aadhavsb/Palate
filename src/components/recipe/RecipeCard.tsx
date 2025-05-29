@@ -1,8 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
-import { Clock, Users, ChefHat, Heart, Share2, BookOpen } from 'lucide-react'
+import { Clock, Users, ChefHat, Share2, BookOpen } from 'lucide-react'
 import { Recipe } from '@/types/recipe'
 import { useSession } from 'next-auth/react'
 
@@ -13,26 +12,7 @@ interface RecipeCardProps {
 
 export default function RecipeCard({ recipe, showActions = true }: RecipeCardProps) {
   const { data: session } = useSession()
-  const [isSaved, setIsSaved] = useState(false)
-
-  const handleSave = async () => {
-    if (!session) return
-    
-    try {
-      const response = await fetch('/api/user/save-recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipeId: recipe._id })
-      })
-      
-      if (response.ok) {
-        setIsSaved(!isSaved)
-      }
-    } catch (error) {
-      console.error('Failed to save recipe:', error)
-    }
-  }
-
+  
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -132,29 +112,15 @@ export default function RecipeCard({ recipe, showActions = true }: RecipeCardPro
             </li>
           ))}
         </ol>
-      </div>
-
-      {/* Actions */}
+      </div>      {/* Actions */}
       {showActions && session && (
         <div className="flex gap-3 pt-4 border-t border-gray-700">
           <button
-            onClick={handleSave}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg font-medium transition-colors ${
-              isSaved
-                ? 'bg-red-500 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            <Heart className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
-            {isSaved ? 'Saved' : 'Save'}
-          </button>
-          
-          <button
             onClick={handleShare}
-            className="flex-1 flex items-center justify-center gap-2 py-2 px-4 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-lg font-medium transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-lg font-medium transition-colors"
           >
             <Share2 className="h-4 w-4" />
-            Share
+            Share Recipe
           </button>
         </div>
       )}

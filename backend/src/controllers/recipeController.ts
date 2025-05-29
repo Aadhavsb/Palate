@@ -8,6 +8,10 @@ import { ApiResponse, AuthRequest, RecipeRequest, PaginationQuery, RecipeFilters
 // Generate recipe from text or image
 export const generateRecipeFromInput = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
+    console.log('=== Recipe Generation Started ===');
+    console.log('Request body:', req.body);
+    console.log('File uploaded:', !!req.file);
+    
     const { text, allergens = [], spiceLevel = 5 } = req.body;
     const image = req.file;
 
@@ -30,13 +34,26 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
     // Parse spice level
     const parsedSpiceLevel = typeof spiceLevel === 'string' ? parseInt(spiceLevel, 10) : spiceLevel;
 
-    // Process input based on type
-    if (image) {
-      inputType = 'image';
-      description = await analyzeImage(image.buffer);
-    } else if (text) {
+    // Handle text input
+    if (text && text.trim()) {
+      console.log('Processing text input:', text);
       description = text.trim();
-    } else {
+      inputType = 'text';
+    }
+    // Handle image input
+    else if (image) {
+      console.log('Processing image input, file size:', image.size);
+      inputType = 'image';
+      try {
+        description = await analyzeImage(image.buffer);
+        console.log('Image analysis result:', description);
+      } catch (error) {
+        console.error('Image analysis failed:', error);
+        throw new Error('Failed to analyze the uploaded image. Please try with a different image or use text description instead.');
+      }
+    }
+    // No valid input provided
+    else {
       res.status(400).json({
         success: false,
         error: 'Either text description or image is required'
@@ -44,6 +61,8 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
       return;
     }
 
+    console.log('Generating recipe with description:', description);
+    
     // Generate recipe using OpenAI
     const generatedRecipe = await generateRecipe({
       description,

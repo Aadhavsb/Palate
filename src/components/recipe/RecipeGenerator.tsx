@@ -96,14 +96,20 @@ export default function RecipeGenerator() {
         throw new Error('Invalid response from server')
       }
       
-      setGeneratedRecipe(data.data.recipe)
-    } catch (err) {
+      setGeneratedRecipe(data.data.recipe)    } catch (err) {
       console.error('Recipe generation error:', err)
       
       if (err instanceof TypeError && err.message.includes('fetch')) {
         setError('Cannot connect to server. Please check if the backend is running.')
+      } else if (err instanceof Error) {
+        // Check if it's an image analysis related error
+        if (err.message.includes('image') && err.message.includes('describe')) {
+          setError(`Image analysis unavailable: ${err.message}`)
+        } else {
+          setError(err.message)
+        }
       } else {
-        setError(err instanceof Error ? err.message : 'Failed to generate recipe. Please try again.')
+        setError('Failed to generate recipe. Please try again.')
       }
     } finally {
       setIsGenerating(false)

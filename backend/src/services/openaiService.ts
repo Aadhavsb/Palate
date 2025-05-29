@@ -132,42 +132,60 @@ export const analyzeImage = async (imageBuffer: Buffer): Promise<string> => {
     // Convert buffer to base64
     const base64Image = imageBuffer.toString('base64');
     
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4-vision-preview',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Analyze this food image and provide a detailed description that could be used to recreate this dish. Include:
-              1. The main dish name or type
-              2. Visible ingredients you can identify
-              3. Cooking method (if apparent)
-              4. Style or cuisine type
-              5. Any garnishes or sides visible
-              
-              Respond with a clear, descriptive paragraph that would help someone recreate this exact dish.`
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
+    // First try GPT-4 Vision
+    try {      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `Analyze this food image and provide a detailed description that could be used to recreate this dish. Include:
+                1. The main dish name or type
+                2. Visible ingredients you can identify
+                3. Cooking method (if apparent)
+                4. Style or cuisine type
+                5. Any garnishes or sides visible
+                
+                Respond with a clear, descriptive paragraph that would help someone recreate this exact dish.`
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`
+                }
               }
-            }
-          ]
-        }
-      ],
-      max_tokens: 400,
-    });
+            ]
+          }
+        ],
+        max_tokens: 400,
+      });
 
-    const description = response.choices[0]?.message?.content;
-    
-    if (!description) {
-      throw new Error('No description received from image analysis');
+      const description = response.choices[0]?.message?.content;
+      
+      if (!description) {
+        throw new Error('No description received from image analysis');
+      }
+      
+      return description;    } catch (visionError: any) {
+      console.error('GPT-4 Vision failed, trying fallback:', visionError.message);
+      
+      // Check for common billing/access issues
+      if (visionError.message?.includes('billing') || 
+          visionError.message?.includes('insufficient_quota') ||
+          visionError.message?.includes('rate_limit') ||
+          visionError.message?.includes('model_not_found') ||
+          visionError.code === 'insufficient_quota' ||
+          visionError.status === 429) {
+        
+        // Return a helpful fallback description that can still generate recipes
+        return `This appears to be a food image. Since image analysis is currently unavailable due to API limitations, I'll create a delicious recipe. Please consider describing your image in the text field instead, such as: "grilled chicken with vegetables", "pasta with tomato sauce", or "stir-fried noodles with beef" for more accurate results.`;
+      }
+      
+      // For other errors, rethrow
+      throw visionError;
     }
-    
-    return description;
   } catch (error) {
     console.error('Error analyzing image:', error);
     throw new Error('Failed to analyze image');

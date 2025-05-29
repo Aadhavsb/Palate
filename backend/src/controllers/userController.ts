@@ -4,7 +4,7 @@ import User from '../models/User';
 import { ApiResponse, AuthRequest, UserStats } from '../types';
 
 // Get user statistics
-export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<UserStats>>) => {
+export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<UserStats>>): Promise<void> => {
   try {
     const userId = req.user!.id;
 
@@ -36,7 +36,9 @@ export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<U
 
     // Average spice level
     const totalSpiceLevel = recipes.reduce((sum, recipe) => sum + recipe.spiceLevel, 0);
-    const averageSpiceLevel = totalRecipes > 0 ? totalSpiceLevel / totalRecipes : 0;    // Recent recipes (last 10)
+    const averageSpiceLevel = totalRecipes > 0 ? totalSpiceLevel / totalRecipes : 0;
+
+    // Recent recipes (last 10)
     const recentRecipes = recipes.slice(0, 10).map(recipe => ({
       ...recipe.toObject(),
       _id: (recipe._id as any).toString()
@@ -84,7 +86,7 @@ export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<U
     });
   } catch (error) {
     console.error('Error fetching user stats:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch user statistics'
     });
@@ -92,17 +94,18 @@ export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<U
 };
 
 // Get user profile with additional info
-export const getUserProfile = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const getUserProfile = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const userId = req.user!.id;
 
     const user = await User.findById(userId);
     
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'User not found'
       });
+      return;
     }
 
     // Get recipe count
@@ -133,7 +136,7 @@ export const getUserProfile = async (req: AuthRequest, res: Response<ApiResponse
     });
   } catch (error) {
     console.error('Error fetching user profile:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch user profile'
     });
@@ -141,7 +144,7 @@ export const getUserProfile = async (req: AuthRequest, res: Response<ApiResponse
 };
 
 // Update user preferences
-export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const userId = req.user!.id;
     const { favoriteCategories, allergens, spiceLevel } = req.body;
@@ -158,10 +161,11 @@ export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiR
     
     if (spiceLevel !== undefined) {
       if (spiceLevel < 0 || spiceLevel > 10) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: 'Spice level must be between 0 and 10'
         });
+        return;
       }
       updateData['preferences.spiceLevel'] = spiceLevel;
     }
@@ -173,10 +177,11 @@ export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiR
     );
 
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'User not found'
       });
+      return;
     }
 
     res.status(200).json({
@@ -188,7 +193,7 @@ export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiR
     });
   } catch (error) {
     console.error('Error updating user preferences:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to update preferences'
     });
@@ -196,7 +201,7 @@ export const updateUserPreferences = async (req: AuthRequest, res: Response<ApiR
 };
 
 // Get dashboard data (combines stats and recent activity)
-export const getDashboardData = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const getDashboardData = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const userId = req.user!.id;
 
@@ -204,10 +209,11 @@ export const getDashboardData = async (req: AuthRequest, res: Response<ApiRespon
     const user = await User.findById(userId);
     
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'User not found'
       });
+      return;
     }
 
     // Get all user recipes
@@ -268,7 +274,7 @@ export const getDashboardData = async (req: AuthRequest, res: Response<ApiRespon
     });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch dashboard data'
     });

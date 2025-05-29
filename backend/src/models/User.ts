@@ -9,8 +9,7 @@ const userSchema = new Schema<UserDocument>({
     required: [true, 'Name is required'],
     trim: true,
     maxlength: [50, 'Name cannot exceed 50 characters']
-  },
-  email: {
+  },  email: {
     type: String,
     required: [true, 'Email is required'],
     unique: true,
@@ -49,7 +48,6 @@ const userSchema = new Schema<UserDocument>({
 });
 
 // Indexes for performance
-userSchema.index({ email: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Virtual for user's recipe count

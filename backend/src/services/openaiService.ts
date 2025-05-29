@@ -1,8 +1,11 @@
 import { OpenAI } from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client only if API key is provided
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  : null;
 
 export interface RecipeGenerationRequest {
   description: string;
@@ -28,6 +31,10 @@ export interface GeneratedRecipe {
 }
 
 export const generateRecipe = async (request: RecipeGenerationRequest): Promise<GeneratedRecipe> => {
+  if (!openai) {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY environment variable.');
+  }
+
   const { description, allergens, spiceLevel } = request;
   
   const allergenText = allergens.length > 0 ? `Avoid these allergens: ${allergens.join(', ')}. ` : '';
@@ -114,6 +121,10 @@ Requirements:
 };
 
 export const analyzeImage = async (imageBuffer: Buffer): Promise<string> => {
+  if (!openai) {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY environment variable.');
+  }
+
   try {
     // Convert buffer to base64
     const base64Image = imageBuffer.toString('base64');

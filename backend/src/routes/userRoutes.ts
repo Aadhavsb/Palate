@@ -4,9 +4,9 @@ import {
   getUserProfile,
   updateUserPreferences,
   getDashboardData
-} from '@/controllers/userController';
-import { protect } from '@/middleware/authMiddleware';
-import { validateRequest } from '@/middleware/validationMiddleware';
+} from '../controllers/userController';
+import { protect } from '../middleware/authMiddleware';
+import { validateRequest } from '../middleware/validationMiddleware';
 import { body } from 'express-validator';
 
 const router = express.Router();

@@ -7,9 +7,9 @@ import {
   searchRecipes,
   deleteRecipe,
   getPublicRecipes
-} from '@/controllers/recipeController';
-import { protect, optional } from '@/middleware/authMiddleware';
-import { validateRequest } from '@/middleware/validationMiddleware';
+} from '../controllers/recipeController';
+import { protect, optional } from '../middleware/authMiddleware';
+import { validateRequest } from '../middleware/validationMiddleware';
 import { body, param, query } from 'express-validator';
 
 const router = express.Router();

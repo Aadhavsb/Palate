@@ -9,14 +9,13 @@ const generateToken = (id: string): string => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error('JWT_SECRET environment variable is not set');
-  }
-  return jwt.sign({ id }, secret, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '30d',
-  });
+  }  return jwt.sign({ id }, secret, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '30d'
+  } as jwt.SignOptions);
 };
 
 // Register new user
-export const register = async (req: Request, res: Response<ApiResponse>) => {
+export const register = async (req: Request, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { name, email, password } = req.body;    // Validation
     if (!name || !email || !password) {
@@ -50,11 +49,10 @@ export const register = async (req: Request, res: Response<ApiResponse>) => {
         favoriteCategories: [],
         allergens: [],
         spiceLevel: 5
-      }
-    });
+      }    });
 
     // Generate token
-    const token = generateToken(user._id.toString());
+    const token = generateToken((user._id as any).toString());
 
     res.status(201).json({
       success: true,
@@ -65,13 +63,12 @@ export const register = async (req: Request, res: Response<ApiResponse>) => {
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          preferences: user.preferences
-        },
+          preferences: user.preferences        },
         token
       }
     });  } catch (error) {
     console.error('Register error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Server error during registration'
     });
@@ -79,7 +76,7 @@ export const register = async (req: Request, res: Response<ApiResponse>) => {
 };
 
 // Login user
-export const login = async (req: Request, res: Response<ApiResponse>) => {
+export const login = async (req: Request, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -106,11 +103,10 @@ export const login = async (req: Request, res: Response<ApiResponse>) => {
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
-      });
-    }
+      });    }
 
     // Generate token
-    const token = generateToken(user._id.toString());
+    const token = generateToken((user._id as any).toString());
 
     res.status(200).json({
       success: true,
@@ -121,11 +117,11 @@ export const login = async (req: Request, res: Response<ApiResponse>) => {
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          preferences: user.preferences
-        },
+          preferences: user.preferences        },
         token
       }
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({
       success: false,
@@ -155,10 +151,10 @@ export const getMe = async (req: AuthRequest, res: Response<ApiResponse>) => {
           email: user.email,
           avatar: user.avatar,
           preferences: user.preferences,
-          createdAt: user.createdAt
-        }
+          createdAt: user.createdAt        }
       }
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error('Get me error:', error);
     return res.status(500).json({
       success: false,
@@ -202,10 +198,10 @@ export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          preferences: user.preferences
-        }
+          preferences: user.preferences        }
       }
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error('Update profile error:', error);
     return res.status(500).json({
       success: false,
@@ -217,12 +213,11 @@ export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>
 // Delete user account
 export const deleteAccount = async (req: AuthRequest, res: Response<ApiResponse>) => {
   try {
-    await User.findByIdAndDelete(req.user!.id);
-
-    res.status(200).json({
+    await User.findByIdAndDelete(req.user!.id);    res.status(200).json({
       success: true,
       message: 'Account deleted successfully'
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error('Delete account error:', error);
     return res.status(500).json({
       success: false,

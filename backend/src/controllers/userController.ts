@@ -36,10 +36,11 @@ export const getUserStats = async (req: AuthRequest, res: Response<ApiResponse<U
 
     // Average spice level
     const totalSpiceLevel = recipes.reduce((sum, recipe) => sum + recipe.spiceLevel, 0);
-    const averageSpiceLevel = totalRecipes > 0 ? totalSpiceLevel / totalRecipes : 0;
-
-    // Recent recipes (last 10)
-    const recentRecipes = recipes.slice(0, 10);
+    const averageSpiceLevel = totalRecipes > 0 ? totalSpiceLevel / totalRecipes : 0;    // Recent recipes (last 10)
+    const recentRecipes = recipes.slice(0, 10).map(recipe => ({
+      ...recipe.toObject(),
+      _id: (recipe._id as any).toString()
+    }));
 
     // Recipes over time (last 30 days)
     const thirtyDaysAgo = new Date();

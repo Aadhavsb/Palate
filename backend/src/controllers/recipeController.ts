@@ -53,9 +53,7 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
 
     // Save to database
     const recipe = new Recipe(recipeData);
-    await recipe.save();
-
-    res.status(201).json({
+    await recipe.save();    res.status(201).json({
       success: true,
       message: 'Recipe generated successfully',
       data: { recipe: { ...recipeData, _id: recipe._id } }

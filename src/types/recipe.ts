@@ -25,4 +25,6 @@ export interface UserStats {
   topCuisines: { [key: string]: number }
   recentRecipes: Recipe[]
   recipesOverTime: { date: string; count: number }[]
+  favoriteIngredients: string[]
+  averageSpiceLevel: number
 }

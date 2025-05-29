@@ -1,6 +1,7 @@
 import { OpenAI } from 'openai';
 
 // Initialize OpenAI client only if API key is provided
+console.log('OpenAI Service - API Key present:', !!process.env.OPENAI_API_KEY);
 const openai = process.env.OPENAI_API_KEY 
   ? new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -31,6 +32,9 @@ export interface GeneratedRecipe {
 }
 
 export const generateRecipe = async (request: RecipeGenerationRequest): Promise<GeneratedRecipe> => {
+  console.log('generateRecipe called - openai client exists:', !!openai);
+  console.log('generateRecipe called - API key exists:', !!process.env.OPENAI_API_KEY);
+  
   if (!openai) {
     throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY environment variable.');
   }
@@ -71,10 +75,9 @@ Requirements:
 - Adjust spiciness and ingredients according to the spice level
 - Provide reasonable nutritional estimates per serving
 - Ensure the recipe is practical and achievable`;
-
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',

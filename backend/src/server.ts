@@ -1,10 +1,13 @@
+// Load environment variables first
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
 
 import { connectDB } from './config/database';
 import { errorHandler, notFound } from './middleware/errorMiddleware';
@@ -12,9 +15,6 @@ import { sanitizeInput } from './middleware/validationMiddleware';
 import authRoutes from './routes/authRoutes';
 import recipeRoutes from './routes/recipeRoutes';
 import userRoutes from './routes/userRoutes';
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,7 +59,7 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/user', userRoutes);
 
 // Error handling middleware
 app.use(notFound);

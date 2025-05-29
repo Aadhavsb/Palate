@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cel
 import { Calendar, TrendingUp, ChefHat, Clock } from 'lucide-react'
 import { UserStats } from '@/types/recipe'
 import RecipeCard from '@/components/recipe/RecipeCard'
+import { api } from '@/lib/api'
 
 const COLORS = ['#f97316', '#fb923c', '#fdba74', '#fed7aa', '#ffedd5']
 
@@ -22,7 +23,6 @@ export default function Dashboard() {
       redirect('/auth/signin')
     }
   }, [status])
-
   useEffect(() => {
     if (session?.user) {
       fetchStats()
@@ -31,12 +31,11 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/user/stats')
-      if (response.ok) {
-        const data = await response.json()
-        setStats(data)
+      const response = await api.get<UserStats>('/api/user/stats')
+      if (response.success && response.data) {
+        setStats(response.data)
       } else {
-        setError('Failed to fetch statistics')
+        setError(response.error || 'Failed to fetch statistics')
       }
     } catch (err) {
       setError('Failed to load dashboard data')

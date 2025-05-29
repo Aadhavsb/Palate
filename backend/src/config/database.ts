@@ -6,9 +6,18 @@ export const connectDB = async (): Promise<void> => {
     
     if (!mongoURI) {
       throw new Error('MONGODB_URI is not defined in environment variables');
-    }
-
-    const conn = await mongoose.connect(mongoURI);
+    }    const conn = await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 0,
+      family: 4, // Use IPv4, skip trying IPv6
+      retryWrites: true,
+      w: 'majority',
+      maxPoolSize: 10,
+      minPoolSize: 1,
+      maxIdleTimeMS: 30000,
+      heartbeatFrequencyMS: 10000
+    });
     
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     

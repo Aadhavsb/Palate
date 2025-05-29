@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { Search, Filter, SortAsc, SortDesc, Clock, Users, ChefHat } from 'lucide-react'
 import { Recipe } from '@/types/recipe'
 import RecipeCard from '@/components/recipe/RecipeCard'
+import { api } from '@/lib/api'
 
 export default function Recipes() {
   const { data: session, status } = useSession()
@@ -39,16 +40,10 @@ export default function Recipes() {
       if (cuisineFilter) params.append('cuisine', cuisineFilter)
       if (difficultyFilter) params.append('difficulty', difficultyFilter)
 
-      const response = await fetch(`/api/user/history?${params}`)
-      if (response.ok) {
-        const data = await response.json()
-        setRecipes(data)
-        // For now, we'll use a simple pagination since the API returns all recipes
-        const itemsPerPage = 12
-        const startIndex = (currentPage - 1) * itemsPerPage
-        const endIndex = startIndex + itemsPerPage
-        setRecipes(data.slice(startIndex, endIndex))
-        setTotalPages(Math.ceil(data.length / itemsPerPage))
+      const response = await api.get<{recipes: Recipe[], pagination: {totalPages: number}}>(`/api/recipes?${params}`)
+      if (response.success && response.data) {
+        setRecipes(response.data.recipes)
+        setTotalPages(response.data.pagination.totalPages)
       }
     } catch (error) {
       console.error('Error fetching recipes:', error)

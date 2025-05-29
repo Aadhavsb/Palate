@@ -16,7 +16,6 @@ export default function RecipeGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState('')
-
   const handleGenerate = async () => {
     if (!textInput.trim() && !imageFile) {
       setError('Please provide either text description or upload an image')
@@ -38,19 +37,20 @@ export default function RecipeGenerator() {
       formData.append('allergens', JSON.stringify(allergens))
       formData.append('spiceLevel', spiceLevel.toString())
 
-      const response = await fetch('/api/generate', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes/generate`, {
         method: 'POST',
         body: formData,
       })
 
       if (!response.ok) {
-        throw new Error('Failed to generate recipe')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to generate recipe')
       }
 
-      const recipe = await response.json()
-      setGeneratedRecipe(recipe)
+      const data = await response.json()
+      setGeneratedRecipe(data.data.recipe)
     } catch (err) {
-      setError('Failed to generate recipe. Please try again.')
+      setError(err instanceof Error ? err.message : 'Failed to generate recipe. Please try again.')
       console.error(err)
     } finally {
       setIsGenerating(false)

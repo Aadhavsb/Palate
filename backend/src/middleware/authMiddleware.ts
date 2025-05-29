@@ -6,22 +6,45 @@ import { AuthRequest } from '../types';
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     let token;
+    let userEmail;
 
+    // Check for JWT token first
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
+    
+    // Check for email header (temporary for NextAuth integration)
+    if (req.headers['x-user-email']) {
+      userEmail = req.headers['x-user-email'] as string;
+    }
 
-    if (!token) {
+    if (!token && !userEmail) {
       res.status(401).json({
         success: false,
-        error: 'Not authorized, no token'
+        error: 'Not authorized, no token or email'
       });
       return;
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
-      const user = await User.findById(decoded.id).select('-password');
+      let user;
+      
+      if (token) {
+        // JWT token authentication
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+        user = await User.findById(decoded.id).select('-password');
+      } else if (userEmail) {
+        // Email-based authentication (for NextAuth integration)
+        user = await User.findOne({ email: userEmail }).select('-password');
+        if (!user) {
+          // Create user if doesn't exist (for Google OAuth users)
+          user = await User.create({
+            email: userEmail,
+            name: userEmail.split('@')[0], // Use email prefix as name initially
+            provider: 'google'
+          });
+        }
+      }
       
       if (!user) {
         res.status(401).json({
@@ -42,7 +65,7 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
       console.error(error);
       res.status(401).json({
         success: false,
-        error: 'Not authorized, token failed'
+        error: 'Not authorized, authentication failed'
       });
       return;
     }

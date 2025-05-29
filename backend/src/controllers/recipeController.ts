@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import multer from 'multer';
-import Recipe from '@/models/Recipe';
-import { generateRecipe, analyzeImage } from '@/services/openaiService';
-import { searchRecipeImage } from '@/services/imageService';
-import { ApiResponse, AuthRequest, RecipeRequest, PaginationQuery, RecipeFilters } from '@/types';
+import Recipe from '../models/Recipe';
+import { generateRecipe, analyzeImage } from '../services/openaiService';
+import { searchRecipeImage } from '../services/imageService';
+import { ApiResponse, AuthRequest, RecipeRequest, PaginationQuery, RecipeFilters } from '../types';
 
 // Generate recipe from text or image
 export const generateRecipeFromInput = async (req: AuthRequest, res: Response<ApiResponse>) => {
@@ -60,10 +60,9 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
       message: 'Recipe generated successfully',
       data: { recipe: { ...recipeData, _id: recipe._id } }
     });
-
   } catch (error) {
     console.error('Error generating recipe:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to generate recipe'
     });
@@ -105,10 +104,9 @@ export const getUserRecipes = async (req: AuthRequest, res: Response<ApiResponse
         }
       }
     });
-
   } catch (error) {
     console.error('Error fetching user recipes:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch recipes'
     });
@@ -141,10 +139,9 @@ export const getRecipeById = async (req: AuthRequest, res: Response<ApiResponse>
       success: true,
       data: { recipe }
     });
-
   } catch (error) {
     console.error('Error fetching recipe:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch recipe'
     });
@@ -223,10 +220,9 @@ export const searchRecipes = async (req: AuthRequest, res: Response<ApiResponse>
         }
       }
     });
-
   } catch (error) {
     console.error('Error searching recipes:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to search recipes'
     });
@@ -261,10 +257,9 @@ export const deleteRecipe = async (req: AuthRequest, res: Response<ApiResponse>)
       success: true,
       message: 'Recipe deleted successfully'
     });
-
   } catch (error) {
     console.error('Error deleting recipe:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to delete recipe'
     });
@@ -312,10 +307,9 @@ export const getPublicRecipes = async (req: AuthRequest, res: Response<ApiRespon
         }
       }
     });
-
   } catch (error) {
     console.error('Error fetching public recipes:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch public recipes'
     });

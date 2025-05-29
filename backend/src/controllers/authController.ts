@@ -65,10 +65,9 @@ export const register = async (req: Request, res: Response<ApiResponse>) => {
         },
         token
       }
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Server error during registration'
     });
@@ -122,10 +121,9 @@ export const login = async (req: Request, res: Response<ApiResponse>) => {
         },
         token
       }
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Server error during login'
     });
@@ -156,10 +154,9 @@ export const getMe = async (req: AuthRequest, res: Response<ApiResponse>) => {
           createdAt: user.createdAt
         }
       }
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error('Get me error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Server error'
     });
@@ -204,10 +201,9 @@ export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>
           preferences: user.preferences
         }
       }
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error('Update profile error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Server error during profile update'
     });
@@ -222,10 +218,9 @@ export const deleteAccount = async (req: AuthRequest, res: Response<ApiResponse>
     res.status(200).json({
       success: true,
       message: 'Account deleted successfully'
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error('Delete account error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Server error during account deletion'
     });

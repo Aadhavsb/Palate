@@ -1,7 +1,8 @@
 import express from 'express';
+
 import multer from 'multer';
 import { generateRecipeFromInput, getUserRecipes, deleteRecipe } from '../controllers/recipeController';
-import { protect } from '../middleware/authMiddleware';
+import { protect, optional } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ const upload = multer({
 });
 
 // Generate recipe route
-router.post('/generate', upload.single('image'), protect, generateRecipeFromInput);
+router.post('/generate', upload.single('image'), optional, generateRecipeFromInput);
 
 // Get user recipes
 router.get('/', protect, getUserRecipes);

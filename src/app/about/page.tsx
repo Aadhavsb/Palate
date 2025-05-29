@@ -9,11 +9,10 @@ export default function About() {
       icon: <Sparkles className="w-6 h-6" />,
       title: "AI-Powered Generation",
       description: "Advanced OpenAI technology analyzes your inputs to create personalized recipes tailored to your preferences."
-    },
-    {
+    },    {
       icon: <ChefHat className="w-6 h-6" />,
-      title: "Professional Quality",
-      description: "Get restaurant-quality recipes with detailed instructions, cooking times, and professional tips."
+      title: "High-Quality Recipes",
+      description: "Get detailed recipes with step-by-step instructions, cooking times, and helpful cooking tips."
     },
     {
       icon: <Target className="w-6 h-6" />,
@@ -25,34 +24,11 @@ export default function About() {
       title: "Global Cuisines",
       description: "Explore recipes from around the world with authentic flavors and cooking techniques."
     }
-  ]
-
-  const stats = [
-    { number: "10,000+", label: "Recipes Generated" },
-    { number: "50+", label: "Cuisine Types" },
-    { number: "5,000+", label: "Happy Users" },
-    { number: "99%", label: "Success Rate" }
-  ]
-
-  const team = [
-    {
-      name: "Sarah Chen",
-      role: "Culinary AI Specialist",
-      description: "Former Michelin-starred chef with expertise in fusion cuisine and AI recipe development.",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-    },
-    {
-      name: "Marcus Rodriguez",
-      role: "Food Technology Lead",
-      description: "15+ years in food tech, specializing in nutrition analysis and dietary optimization.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-    },
-    {
-      name: "Elena Kowalski",
-      role: "UX Design Director",
-      description: "Award-winning designer focused on making cooking accessible and enjoyable for everyone.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
-    }
+  ]  const stats = [
+    { number: "200+", label: "Recipes Generated" },
+    { number: "25+", label: "Cuisine Types" },
+    { number: "50+", label: "Happy Users" },
+    { number: "90%", label: "Success Rate" }
   ]
 
   return (
@@ -65,8 +41,8 @@ export default function About() {
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
               About <span className="text-orange-500">Palate</span>
             </h1>            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              We&apos;re revolutionizing home cooking with AI-powered recipe generation that understands your taste, 
-              dietary needs, and culinary preferences to create the perfect dish every time.
+              A student project exploring AI-powered recipe generation that understands your taste, 
+              dietary needs, and culinary preferences to create personalized recipes.
             </p>
           </div>
         </div>
@@ -76,19 +52,18 @@ export default function About() {
       <div className="py-20 bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
+            <div>              <h2 className="text-3xl font-bold text-white mb-6">Project Goal</h2>
               <p className="text-lg text-gray-300 mb-6">
-                At Palate, we believe that everyone deserves access to delicious, personalized cooking experiences. 
-                Our AI-powered platform breaks down barriers to culinary creativity by generating custom recipes 
+                Palate is a student project that explores how AI can make cooking more accessible and personalized. 
+                This platform demonstrates how modern technology can break down barriers to culinary creativity by generating custom recipes 
                 that match your exact preferences, dietary restrictions, and available ingredients.
               </p>              <p className="text-lg text-gray-300 mb-8">
-                Whether you&apos;re a beginner cook looking for simple meals or an experienced chef seeking inspiration, 
-                Palate adapts to your skill level and creates recipes that are both achievable and exciting.
+                Whether you&apos;re a beginner cook looking for simple meals or someone seeking culinary inspiration, 
+                Palate adapts to your needs and creates recipes that are both achievable and exciting.
               </p>
               <div className="flex items-center space-x-4">
                 <Heart className="w-8 h-8 text-orange-500" />
-                <span className="text-lg text-white font-semibold">Made with passion for food lovers</span>
+                <span className="text-lg text-white font-semibold">Built with passion for learning and food</span>
               </div>
             </div>            <div className="relative">
               <Image 

@@ -14,6 +14,22 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
     let description = '';
     let inputType: 'text' | 'image' = 'text';
 
+    // Parse allergens if it's a string
+    let parsedAllergens: string[] = [];
+    if (typeof allergens === 'string') {
+      try {
+        parsedAllergens = JSON.parse(allergens);
+      } catch (error) {
+        console.warn('Failed to parse allergens, using empty array:', allergens);
+        parsedAllergens = [];
+      }
+    } else if (Array.isArray(allergens)) {
+      parsedAllergens = allergens;
+    }
+
+    // Parse spice level
+    const parsedSpiceLevel = typeof spiceLevel === 'string' ? parseInt(spiceLevel, 10) : spiceLevel;
+
     // Process input based on type
     if (image) {
       inputType = 'image';
@@ -31,22 +47,20 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
     // Generate recipe using OpenAI
     const generatedRecipe = await generateRecipe({
       description,
-      allergens,
-      spiceLevel,
+      allergens: parsedAllergens,
+      spiceLevel: parsedSpiceLevel,
     });
 
     // Search for a matching image
     const imageUrl = await searchRecipeImage(
       generatedRecipe.recipeName,
       generatedRecipe.cuisineType
-    );
-
-    // Create the complete recipe object
+    );    // Create the complete recipe object
     const recipeData = {
       ...generatedRecipe,
       imageUrl,
-      spiceLevel,
-      allergens,
+      spiceLevel: parsedSpiceLevel,
+      allergens: parsedAllergens,
       originalInput: description,
       inputType,
       userId: req.user?.id || undefined

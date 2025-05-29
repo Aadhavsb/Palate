@@ -46,7 +46,6 @@ export default function RecipeGenerator() {
     setError('')
     setImageFile(file)
   }
-
   const handleGenerate = async () => {
     if (inputType === 'text' && !textInput.trim()) {
       setError('Please provide a text description')
@@ -62,6 +61,9 @@ export default function RecipeGenerator() {
     setError('')
     
     try {
+      const { getSession } = await import('next-auth/react')
+      const session = await getSession()
+      
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
       const formData = new FormData()
       
@@ -74,8 +76,14 @@ export default function RecipeGenerator() {
       formData.append('allergens', JSON.stringify(allergens))
       formData.append('spiceLevel', spiceLevel.toString())
 
+      const headers: Record<string, string> = {}
+      if (session?.user?.email) {
+        headers['X-User-Email'] = session.user.email
+      }
+
       const response = await fetch(`${API_BASE_URL}/recipes/generate`, {
         method: 'POST',
+        headers,
         body: formData,
       })
 

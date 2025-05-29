@@ -62,9 +62,7 @@ export async function apiCall<T = any>(
       
       const errorData = await response.json().catch(() => ({ message: 'Network error' }))
       throw new Error(errorData.message || `HTTP ${response.status}`)
-    }
-
-    const data = await response.json()
+    }    const data = await response.json()
     
     console.log('API Response:', { status: response.status, data })
     
@@ -73,7 +71,14 @@ export async function apiCall<T = any>(
         success: false,
         error: data.error || `API request failed with status ${response.status}`,
       }
-    }    return data
+    }
+
+    // Return the response in the expected ApiResponse format
+    return {
+      success: data.success || true,
+      data: data.data || data,
+      error: data.error
+    }
   } catch (error) {
     console.error('API call failed:', error)
     

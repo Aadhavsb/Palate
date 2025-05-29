@@ -46,10 +46,8 @@ export default function Hero() {
           </div>
 
           {/* Right Content - Food Image */}
-          <div className="relative">
-            <div className="relative w-full h-96 lg:h-[600px] rounded-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-500">
-              <Image
-                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1081&q=80"
+          <div className="relative">            <div className="relative w-full h-96 lg:h-[600px] rounded-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-500">              <Image
+                src="/hero-food.jpg"
                 alt="Delicious gourmet meal"
                 fill
                 className="object-cover"

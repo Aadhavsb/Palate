@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Menu, X, ChefHat } from 'lucide-react'
 
@@ -39,11 +40,12 @@ export default function Navbar() {
             {/* Auth Button */}
             {status === 'loading' ? (
               <div className="w-20 h-10 bg-gray-700 rounded animate-pulse" />
-            ) : session ? (
-              <div className="flex items-center space-x-4">
-                <img
+            ) : session ? (              <div className="flex items-center space-x-4">
+                <Image
                   src={session.user?.image || '/placeholder-avatar.png'}
                   alt="Profile"
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full"
                 />
                 <button

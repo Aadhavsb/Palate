@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ChefHat, Sparkles, Users, Heart, Target, Award, Globe, Shield } from 'lucide-react'
 
 export default function About() {
@@ -63,9 +64,8 @@ export default function About() {
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
               About <span className="text-orange-500">Palate</span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              We're revolutionizing home cooking with AI-powered recipe generation that understands your taste, 
+            </h1>            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+              We&apos;re revolutionizing home cooking with AI-powered recipe generation that understands your taste, 
               dietary needs, and culinary preferences to create the perfect dish every time.
             </p>
           </div>
@@ -82,20 +82,20 @@ export default function About() {
                 At Palate, we believe that everyone deserves access to delicious, personalized cooking experiences. 
                 Our AI-powered platform breaks down barriers to culinary creativity by generating custom recipes 
                 that match your exact preferences, dietary restrictions, and available ingredients.
-              </p>
-              <p className="text-lg text-gray-300 mb-8">
-                Whether you're a beginner cook looking for simple meals or an experienced chef seeking inspiration, 
+              </p>              <p className="text-lg text-gray-300 mb-8">
+                Whether you&apos;re a beginner cook looking for simple meals or an experienced chef seeking inspiration, 
                 Palate adapts to your skill level and creates recipes that are both achievable and exciting.
               </p>
               <div className="flex items-center space-x-4">
                 <Heart className="w-8 h-8 text-orange-500" />
                 <span className="text-lg text-white font-semibold">Made with passion for food lovers</span>
               </div>
-            </div>
-            <div className="relative">
-              <img 
+            </div>            <div className="relative">
+              <Image 
                 src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop" 
                 alt="Cooking ingredients"
+                width={600}
+                height={400}
                 className="rounded-lg shadow-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-transparent rounded-lg"></div>
@@ -158,11 +158,12 @@ export default function About() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member, index) => (
-              <div key={index} className="bg-gray-800 p-6 rounded-lg border border-gray-700 text-center">
-                <img 
+            {team.map((member, index) => (              <div key={index} className="bg-gray-800 p-6 rounded-lg border border-gray-700 text-center">
+                <Image 
                   src={member.image} 
                   alt={member.name}
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
                 />
                 <h3 className="text-xl font-semibold text-white mb-1">{member.name}</h3>

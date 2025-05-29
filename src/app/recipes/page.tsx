@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Search, Filter, SortAsc, SortDesc, Clock, Users, ChefHat } from 'lucide-react'
 import { Recipe } from '@/types/recipe'
 import RecipeCard from '@/components/recipe/RecipeCard'
@@ -25,14 +25,7 @@ export default function Recipes() {
   ]
 
   const difficulties = ['Easy', 'Medium', 'Hard']
-
-  useEffect(() => {
-    if (session?.user) {
-      fetchRecipes()
-    }
-  }, [session, searchQuery, cuisineFilter, difficultyFilter, sortBy, sortOrder, currentPage])
-
-  const fetchRecipes = async () => {
+  const fetchRecipes = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({
@@ -62,7 +55,13 @@ export default function Recipes() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentPage, sortBy, sortOrder, searchQuery, cuisineFilter, difficultyFilter])
+
+  useEffect(() => {
+    if (session?.user) {
+      fetchRecipes()
+    }
+  }, [session, fetchRecipes])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { Calendar, TrendingUp, ChefHat, Clock } from 'lucide-react'
 import { UserStats } from '@/types/recipe'
@@ -91,9 +92,8 @@ export default function Dashboard() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
             Welcome back, {session?.user?.name}!
-          </h1>
-          <p className="text-gray-300">
-            Here's your cooking journey at a glance
+          </h1>          <p className="text-gray-300">
+            Here&apos;s your cooking journey at a glance
           </p>
         </div>
 
@@ -206,11 +206,10 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-12">
               <ChefHat className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-lg">No recipes generated yet</p>
-              <p className="text-gray-500 mb-6">Start creating your first recipe!</p>
-              <a href="/#generator" className="btn-primary">
+              <p className="text-gray-400 text-lg">No recipes generated yet</p>              <p className="text-gray-500 mb-6">Start creating your first recipe!</p>
+              <Link href="/#generator" className="btn-primary">
                 Generate Recipe
-              </a>
+              </Link>
             </div>
           )}
         </div>

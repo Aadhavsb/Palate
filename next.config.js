@@ -3,9 +3,7 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'source.unsplash.com', 'via.placeholder.com'],
   },
-  experimental: {
-    serverComponentsExternalPackages: ['mongoose'],
-  },
+  serverExternalPackages: ['mongoose'],
 }
 
 module.exports = nextConfig

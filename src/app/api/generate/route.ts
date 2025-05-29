@@ -53,10 +53,10 @@ export async function POST(request: NextRequest) {
       allergens,
       originalInput: description,
       inputType,
-    }
-
-    // Save to database if user is authenticated
+    }    // Save to database if user is authenticated
     const session = await getServerSession()
+    let savedRecipe: any = null
+    
     if (session?.user?.email) {
       // Find user and save recipe
       const recipe = new Recipe({
@@ -64,11 +64,15 @@ export async function POST(request: NextRequest) {
         userId: session.user.id,
       })
       
-      await recipe.save()
-      recipeData._id = recipe._id.toString()
+      savedRecipe = await recipe.save()
     }
 
-    return NextResponse.json(recipeData)
+    // Return recipe data with ID if saved
+    const responseData = savedRecipe 
+      ? { ...recipeData, _id: savedRecipe._id.toString() }
+      : recipeData
+
+    return NextResponse.json(responseData)
     
   } catch (error) {
     console.error('Error in recipe generation:', error)

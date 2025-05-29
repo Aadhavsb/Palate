@@ -6,7 +6,9 @@ export const connectDB = async (): Promise<void> => {
     
     if (!mongoURI) {
       throw new Error('MONGODB_URI is not defined in environment variables');
-    }    const conn = await mongoose.connect(mongoURI, {
+    }
+    
+    const conn = await mongoose.connect(mongoURI, {
       serverSelectionTimeoutMS: 30000,
       connectTimeoutMS: 30000,
       socketTimeoutMS: 0,

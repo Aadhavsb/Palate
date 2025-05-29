@@ -16,9 +16,45 @@ export default function RecipeGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState('')
+
+  const validateFile = (file: File): string | null => {
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    
+    if (file.size > maxSize) {
+      return 'File size must be less than 10MB'
+    }
+    
+    if (!allowedTypes.includes(file.type)) {
+      return 'Only PNG, JPG, JPEG, and WebP files are allowed'
+    }
+    
+    return null
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    const validation = validateFile(file)
+    if (validation) {
+      setError(validation)
+      setImageFile(null)
+      return
+    }
+    
+    setError('')
+    setImageFile(file)
+  }
+
   const handleGenerate = async () => {
-    if (!textInput.trim() && !imageFile) {
-      setError('Please provide either text description or upload an image')
+    if (inputType === 'text' && !textInput.trim()) {
+      setError('Please provide a text description')
+      return
+    }
+    
+    if (inputType === 'image' && !imageFile) {
+      setError('Please upload an image')
       return
     }
 
@@ -26,6 +62,7 @@ export default function RecipeGenerator() {
     setError('')
     
     try {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
       const formData = new FormData()
       
       if (inputType === 'text') {
@@ -37,21 +74,31 @@ export default function RecipeGenerator() {
       formData.append('allergens', JSON.stringify(allergens))
       formData.append('spiceLevel', spiceLevel.toString())
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes/generate`, {
+      const response = await fetch(`${API_BASE_URL}/recipes/generate`, {
         method: 'POST',
         body: formData,
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to generate recipe')
+        const errorData = await response.json().catch(() => ({ error: 'Failed to generate recipe' }))
+        throw new Error(errorData.error || `Server error: ${response.status}`)
       }
 
       const data = await response.json()
+      
+      if (!data.success || !data.data?.recipe) {
+        throw new Error('Invalid response from server')
+      }
+      
       setGeneratedRecipe(data.data.recipe)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate recipe. Please try again.')
-      console.error(err)
+      console.error('Recipe generation error:', err)
+      
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Cannot connect to server. Please check if the backend is running.')
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to generate recipe. Please try again.')
+      }
     } finally {
       setIsGenerating(false)
     }
@@ -74,7 +121,11 @@ export default function RecipeGenerator() {
           <div className="flex justify-center">
             <div className="bg-background-dark rounded-lg p-1 flex">
               <button
-                onClick={() => setInputType('text')}
+                onClick={() => {
+                  setInputType('text')
+                  setError('')
+                  setImageFile(null)
+                }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
                   inputType === 'text'
                     ? 'bg-primary-500 text-white'
@@ -85,7 +136,11 @@ export default function RecipeGenerator() {
                 Text Description
               </button>
               <button
-                onClick={() => setInputType('image')}
+                onClick={() => {
+                  setInputType('image')
+                  setError('')
+                  setTextInput('')
+                }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
                   inputType === 'image'
                     ? 'bg-primary-500 text-white'
@@ -116,11 +171,13 @@ export default function RecipeGenerator() {
               <label className="block text-white font-medium mb-2">
                 Upload food image
               </label>
-              <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-primary-500 transition-colors">
+              <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                error ? 'border-red-500' : 'border-gray-600 hover:border-primary-500'
+              }`}>
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                  onChange={handleFileChange}
                   className="hidden"
                   id="image-upload"
                 />
@@ -129,7 +186,7 @@ export default function RecipeGenerator() {
                   <p className="text-gray-300">
                     {imageFile ? imageFile.name : 'Click to upload or drag and drop'}
                   </p>
-                  <p className="text-sm text-gray-500 mt-2">PNG, JPG up to 10MB</p>
+                  <p className="text-sm text-gray-500 mt-2">PNG, JPG, JPEG, WebP up to 10MB</p>
                 </label>
               </div>
             </div>
@@ -151,7 +208,7 @@ export default function RecipeGenerator() {
           {/* Generate Button */}
           <button
             onClick={handleGenerate}
-            disabled={isGenerating}
+            disabled={isGenerating || (inputType === 'text' && !textInput.trim()) || (inputType === 'image' && !imageFile)}
             className="w-full btn-primary text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isGenerating ? (

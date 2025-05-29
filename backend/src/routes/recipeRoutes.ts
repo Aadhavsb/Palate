@@ -1,25 +1,15 @@
 import express from 'express';
 import multer from 'multer';
-import {
-  generateRecipeFromInput,
-  getUserRecipes,
-  getRecipeById,
-  searchRecipes,
-  deleteRecipe,
-  getPublicRecipes
-} from '../controllers/recipeController';
-import { protect, optional } from '../middleware/authMiddleware';
-import { validateRequest } from '../middleware/validationMiddleware';
-import { body, param, query } from 'express-validator';
+import { generateRecipeFromText, generateRecipeFromImage } from '../services/recipeService';
+import { searchRecipeImage } from '../services/imageService';
 
 const router = express.Router();
 
-// Configure multer for image uploads
-const storage = multer.memoryStorage();
+// Configure multer for file uploads
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB
+    fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -27,62 +17,81 @@ const upload = multer({
     } else {
       cb(new Error('Only image files are allowed'));
     }
-  }
+  },
 });
 
-// Validation rules
-const generateRecipeValidation = [
-  body('allergens')
-    .optional()
-    .isArray()
-    .withMessage('Allergens must be an array'),
-  body('spiceLevel')
-    .optional()
-    .isInt({ min: 0, max: 10 })
-    .withMessage('Spice level must be between 0 and 10'),
-  body('text')
-    .optional()
-    .trim()
-    .isLength({ min: 3, max: 500 })
-    .withMessage('Text description must be between 3 and 500 characters')
-];
+router.post('/generate', upload.single('image'), async (req, res) => {
+  try {
+    const { text, allergens, spiceLevel } = req.body;
+    const image = req.file;
 
-const recipeIdValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Invalid recipe ID')
-];
+    // Validate input
+    if (!text && !image) {
+      return res.status(400).json({
+        success: false,
+        error: 'Either text description or image is required'
+      });
+    }
 
-const searchValidation = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page must be a positive integer'),
-  query('limit')
-    .optional()
-    .isInt({ min: 1, max: 50 })
-    .withMessage('Limit must be between 1 and 50'),
-  query('spiceLevel')
-    .optional()
-    .isInt({ min: 0, max: 10 })
-    .withMessage('Spice level must be between 0 and 10')
-];
+    // Parse allergens
+    let parsedAllergens: string[] = [];
+    if (allergens) {
+      try {
+        parsedAllergens = JSON.parse(allergens);
+      } catch (error) {
+        console.warn('Failed to parse allergens:', error);
+      }
+    }
 
-// Public routes
-router.get('/public', searchValidation, validateRequest, getPublicRecipes);
-router.get('/search', optional, searchValidation, validateRequest, searchRecipes);
-router.get('/:id', optional, recipeIdValidation, validateRequest, getRecipeById);
+    // Parse spice level
+    const parsedSpiceLevel = spiceLevel ? parseInt(spiceLevel, 10) : 5;
 
-// Protected routes
-router.post('/generate', 
-  optional, 
-  upload.single('image'), 
-  generateRecipeValidation, 
-  validateRequest, 
-  generateRecipeFromInput
-);
+    let recipe;
 
-router.get('/', protect, searchValidation, validateRequest, getUserRecipes);
-router.delete('/:id', protect, recipeIdValidation, validateRequest, deleteRecipe);
+    if (text) {
+      // Generate recipe from text
+      recipe = await generateRecipeFromText(text, parsedAllergens, parsedSpiceLevel);
+    } else if (image) {
+      // Generate recipe from image
+      recipe = await generateRecipeFromImage(image.buffer, parsedAllergens, parsedSpiceLevel);
+    }
+
+    if (!recipe) {
+      throw new Error('Failed to generate recipe');
+    }
+
+    // Add image to recipe if not present
+    if (!recipe.image) {
+      try {
+        recipe.image = await searchRecipeImage(recipe.name, recipe.cuisine || '');
+      } catch (imageError) {
+        console.warn('Failed to fetch recipe image:', imageError);
+        recipe.image = `https://via.placeholder.com/800x600/1f2937/f97316?text=${encodeURIComponent(recipe.name)}`;
+      }
+    }
+
+    res.json({
+      success: true,
+      data: { recipe }
+    });
+
+  } catch (error) {
+    console.error('Recipe generation error:', error);
+    
+    if (error instanceof multer.MulterError) {
+      if (error.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          success: false,
+          error: 'File size too large. Maximum size is 10MB.'
+        });
+      }
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to generate recipe'
+    });
+  }
+});
 
 export default router;

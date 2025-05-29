@@ -17,7 +17,9 @@ const generateToken = (id: string): string => {
 // Register new user
 export const register = async (req: Request, res: Response<ApiResponse>): Promise<void> => {
   try {
-    const { name, email, password } = req.body;    // Validation
+    const { name, email, password } = req.body;
+
+    // Validation
     if (!name || !email || !password) {
       res.status(400).json({
         success: false,
@@ -49,7 +51,8 @@ export const register = async (req: Request, res: Response<ApiResponse>): Promis
         favoriteCategories: [],
         allergens: [],
         spiceLevel: 5
-      }    });
+      }
+    });
 
     // Generate token
     const token = generateToken((user._id as any).toString());
@@ -63,10 +66,12 @@ export const register = async (req: Request, res: Response<ApiResponse>): Promis
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          preferences: user.preferences        },
+          preferences: user.preferences
+        },
         token
       }
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error('Register error:', error);
     res.status(500).json({
       success: false,
@@ -82,28 +87,32 @@ export const login = async (req: Request, res: Response<ApiResponse>): Promise<v
 
     // Validation
     if (!email || !password) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Please provide email and password'
       });
+      return;
     }
 
     // Check for user and include password for verification
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Invalid credentials'
       });
+      return;
     }
 
     // Check password
     const isPasswordCorrect = await bcrypt.compare(password, user.password!);
     if (!isPasswordCorrect) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Invalid credentials'
-      });    }
+      });
+      return;
+    }
 
     // Generate token
     const token = generateToken((user._id as any).toString());
@@ -117,13 +126,14 @@ export const login = async (req: Request, res: Response<ApiResponse>): Promise<v
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          preferences: user.preferences        },
+          preferences: user.preferences
+        },
         token
       }
     });
   } catch (error) {
     console.error('Login error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Server error during login'
     });
@@ -131,15 +141,16 @@ export const login = async (req: Request, res: Response<ApiResponse>): Promise<v
 };
 
 // Get current user
-export const getMe = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const getMe = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const user = await User.findById(req.user!.id);
     
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'User not found'
       });
+      return;
     }
 
     res.status(200).json({
@@ -151,12 +162,13 @@ export const getMe = async (req: AuthRequest, res: Response<ApiResponse>) => {
           email: user.email,
           avatar: user.avatar,
           preferences: user.preferences,
-          createdAt: user.createdAt        }
+          createdAt: user.createdAt
+        }
       }
     });
   } catch (error) {
     console.error('Get me error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Server error'
     });
@@ -164,7 +176,7 @@ export const getMe = async (req: AuthRequest, res: Response<ApiResponse>) => {
 };
 
 // Update user profile
-export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const allowedUpdates = ['name', 'avatar', 'preferences'];
     const updates: any = {};
@@ -183,10 +195,11 @@ export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>
     );
 
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'User not found'
       });
+      return;
     }
 
     res.status(200).json({
@@ -198,12 +211,13 @@ export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          preferences: user.preferences        }
+          preferences: user.preferences
+        }
       }
     });
   } catch (error) {
     console.error('Update profile error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Server error during profile update'
     });
@@ -211,15 +225,17 @@ export const updateProfile = async (req: AuthRequest, res: Response<ApiResponse>
 };
 
 // Delete user account
-export const deleteAccount = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const deleteAccount = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
-    await User.findByIdAndDelete(req.user!.id);    res.status(200).json({
+    await User.findByIdAndDelete(req.user!.id);
+
+    res.status(200).json({
       success: true,
       message: 'Account deleted successfully'
     });
   } catch (error) {
     console.error('Delete account error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Server error during account deletion'
     });

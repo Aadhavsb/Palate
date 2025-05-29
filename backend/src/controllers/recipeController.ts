@@ -6,7 +6,7 @@ import { searchRecipeImage } from '../services/imageService';
 import { ApiResponse, AuthRequest, RecipeRequest, PaginationQuery, RecipeFilters } from '../types';
 
 // Generate recipe from text or image
-export const generateRecipeFromInput = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const generateRecipeFromInput = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { text, allergens = [], spiceLevel = 5 } = req.body;
     const image = req.file;
@@ -21,10 +21,11 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
     } else if (text) {
       description = text.trim();
     } else {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Either text description or image is required'
       });
+      return;
     }
 
     // Generate recipe using OpenAI
@@ -53,14 +54,16 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
 
     // Save to database
     const recipe = new Recipe(recipeData);
-    await recipe.save();    res.status(201).json({
+    await recipe.save();
+
+    res.status(201).json({
       success: true,
       message: 'Recipe generated successfully',
       data: { recipe: { ...recipeData, _id: recipe._id } }
     });
   } catch (error) {
     console.error('Error generating recipe:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to generate recipe'
     });
@@ -68,7 +71,7 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
 };
 
 // Get user's recipe history
-export const getUserRecipes = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const getUserRecipes = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { page = '1', limit = '10', sortBy = 'createdAt', sortOrder = 'desc' } = req.query as PaginationQuery;
     
@@ -104,7 +107,7 @@ export const getUserRecipes = async (req: AuthRequest, res: Response<ApiResponse
     });
   } catch (error) {
     console.error('Error fetching user recipes:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch recipes'
     });
@@ -112,25 +115,27 @@ export const getUserRecipes = async (req: AuthRequest, res: Response<ApiResponse
 };
 
 // Get recipe by ID
-export const getRecipeById = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const getRecipeById = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { id } = req.params;
 
     const recipe = await Recipe.findById(id);
 
     if (!recipe) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Recipe not found'
       });
+      return;
     }
 
     // Check if user owns the recipe (if authentication is provided)
     if (req.user && recipe.userId && recipe.userId.toString() !== req.user.id) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Not authorized to access this recipe'
       });
+      return;
     }
 
     res.status(200).json({
@@ -139,7 +144,7 @@ export const getRecipeById = async (req: AuthRequest, res: Response<ApiResponse>
     });
   } catch (error) {
     console.error('Error fetching recipe:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch recipe'
     });
@@ -147,7 +152,7 @@ export const getRecipeById = async (req: AuthRequest, res: Response<ApiResponse>
 };
 
 // Search recipes
-export const searchRecipes = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const searchRecipes = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { 
       q = '', 
@@ -220,7 +225,7 @@ export const searchRecipes = async (req: AuthRequest, res: Response<ApiResponse>
     });
   } catch (error) {
     console.error('Error searching recipes:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to search recipes'
     });
@@ -228,25 +233,27 @@ export const searchRecipes = async (req: AuthRequest, res: Response<ApiResponse>
 };
 
 // Delete recipe
-export const deleteRecipe = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const deleteRecipe = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { id } = req.params;
 
     const recipe = await Recipe.findById(id);
 
     if (!recipe) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Recipe not found'
       });
+      return;
     }
 
     // Check if user owns the recipe
     if (recipe.userId && recipe.userId.toString() !== req.user!.id) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Not authorized to delete this recipe'
       });
+      return;
     }
 
     await Recipe.findByIdAndDelete(id);
@@ -257,7 +264,7 @@ export const deleteRecipe = async (req: AuthRequest, res: Response<ApiResponse>)
     });
   } catch (error) {
     console.error('Error deleting recipe:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to delete recipe'
     });
@@ -265,7 +272,7 @@ export const deleteRecipe = async (req: AuthRequest, res: Response<ApiResponse>)
 };
 
 // Get public recipes (for discovery)
-export const getPublicRecipes = async (req: AuthRequest, res: Response<ApiResponse>) => {
+export const getPublicRecipes = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
   try {
     const { page = '1', limit = '20', cuisine, difficulty } = req.query as PaginationQuery & RecipeFilters;
     
@@ -307,7 +314,7 @@ export const getPublicRecipes = async (req: AuthRequest, res: Response<ApiRespon
     });
   } catch (error) {
     console.error('Error fetching public recipes:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch public recipes'
     });

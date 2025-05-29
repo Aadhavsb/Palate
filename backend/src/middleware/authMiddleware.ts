@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import { AuthRequest } from '../types';
 
-export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const protect = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     let token;
 
@@ -12,10 +12,11 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
     }
 
     if (!token) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Not authorized, no token'
       });
+      return;
     }
 
     try {
@@ -23,10 +24,12 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
       const user = await User.findById(decoded.id).select('-password');
       
       if (!user) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           error: 'Not authorized, user not found'
-        });      }
+        });
+        return;
+      }
 
       req.user = {
         id: (user._id as any).toString(),
@@ -37,21 +40,23 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
       next();
     } catch (error) {
       console.error(error);
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Not authorized, token failed'
       });
+      return;
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: 'Server error in auth middleware'
     });
+    return;
   }
 };
 
-export const optional = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const optional = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     let token;
 

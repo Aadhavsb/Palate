@@ -16,19 +16,24 @@ export const generateRecipeFromInput = async (req: AuthRequest, res: Response<Ap
     const image = req.file;
 
     let description = '';
-    let inputType: 'text' | 'image' = 'text';
-
-    // Parse allergens if it's a string
+    let inputType: 'text' | 'image' = 'text';    // Parse allergens if it's a string
     let parsedAllergens: string[] = [];
+    console.log('Raw allergens value:', allergens, 'Type:', typeof allergens);
+    
     if (typeof allergens === 'string') {
       try {
         parsedAllergens = JSON.parse(allergens);
+        console.log('Parsed allergens from string:', parsedAllergens);
       } catch (error) {
         console.warn('Failed to parse allergens, using empty array:', allergens);
         parsedAllergens = [];
       }
     } else if (Array.isArray(allergens)) {
       parsedAllergens = allergens;
+      console.log('Allergens already array:', parsedAllergens);
+    } else {
+      console.warn('Allergens is neither string nor array, using empty array. Type:', typeof allergens, 'Value:', allergens);
+      parsedAllergens = [];
     }
 
     // Parse spice level

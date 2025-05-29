@@ -38,10 +38,13 @@ export const generateRecipe = async (request: RecipeGenerationRequest): Promise<
   if (!openai) {
     throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY environment variable.');
   }
-
   const { description, allergens, spiceLevel } = request;
   
-  const allergenText = allergens.length > 0 ? `Avoid these allergens: ${allergens.join(', ')}. ` : '';
+  // Ensure allergens is always an array
+  const allergensArray = Array.isArray(allergens) ? allergens : [];
+  console.log('OpenAI Service - allergens:', allergens, 'Type:', typeof allergens, 'IsArray:', Array.isArray(allergens));
+  
+  const allergenText = allergensArray.length > 0 ? `Avoid these allergens: ${allergensArray.join(', ')}. ` : '';
   const spiceText = `Spice level: ${spiceLevel}/10 (0=mild, 10=extremely hot). `;
   
   const prompt = `Create a detailed recipe based on this description: "${description}"

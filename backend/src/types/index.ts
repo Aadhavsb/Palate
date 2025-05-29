@@ -62,6 +62,11 @@ export interface AuthRequest extends Express.Request {
     email: string;
     name: string;
   };
+  body: any;
+  params: any;
+  query: any;
+  headers: any;
+  file?: Express.Multer.File;
 }
 
 export interface ApiResponse<T = any> {
@@ -79,12 +84,9 @@ export interface PaginationQuery {
 }
 
 export interface RecipeFilters {
-  cuisineType?: string;
-  tags?: string[];
-  spiceLevel?: {
-    min?: number;
-    max?: number;
-  };
-  cookingTime?: string;
+  q?: string;
+  cuisine?: string;
   difficulty?: string;
+  spiceLevel?: string;
+  allergens?: string;
 }

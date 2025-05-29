@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 
 import { connectDB } from '@/config/database';
 import { errorHandler, notFound } from '@/middleware/errorMiddleware';
+import { sanitizeInput } from '@/middleware/validationMiddleware';
 import authRoutes from '@/routes/authRoutes';
 import recipeRoutes from '@/routes/recipeRoutes';
 import userRoutes from '@/routes/userRoutes';
@@ -41,6 +42,7 @@ app.use(cors({
 app.use(morgan('combined')); // Logging
 app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded bodies
+app.use(sanitizeInput); // Sanitize inputs
 
 // Static files for uploads
 app.use('/uploads', express.static('uploads'));

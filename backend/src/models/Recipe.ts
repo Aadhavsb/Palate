@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { Recipe as RecipeType } from '@/types';
+import { Recipe as RecipeType } from '../types';
 
-interface RecipeDocument extends RecipeType, Document {}
+interface RecipeDocument extends Omit<RecipeType, '_id'>, Document {}
 
 const recipeSchema = new Schema<RecipeDocument>({
   recipeName: {

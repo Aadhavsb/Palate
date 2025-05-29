@@ -1,0 +1,43 @@
+{
+  "name": "palate",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["ai", "recipe", "generator", "nextjs", "mongodb"],
+  "author": "",
+  "license": "ISC",
+  "description": "AI-Powered Recipe Generator App with Next.js and MongoDB",
+  "dependencies": {
+    "@auth/mongodb-adapter": "^3.9.1",
+    "@headlessui/react": "^2.2.4",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.15.24",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "autoprefixer": "^10.4.21",
+    "axios": "^1.9.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "eslint": "^9.27.0",
+    "eslint-config-next": "^15.3.2",
+    "lucide-react": "^0.511.0",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.1",
+    "multer": "^2.0.0",
+    "next": "^15.3.2",
+    "next-auth": "^4.24.11",
+    "openai": "^4.103.0",
+    "postcss": "^8.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "recharts": "^2.15.3",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3"
+  }
+}

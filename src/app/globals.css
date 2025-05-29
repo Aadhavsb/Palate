@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Poppins', ui-sans-serif, system-ui;
+  }
+  
+  body {
+    @apply bg-background-dark text-white;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-background-charcoal hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 border border-gray-600;
+  }
+  
+  .card {
+    @apply bg-background-charcoal rounded-xl p-6 shadow-lg border border-gray-700;
+  }
+  
+  .recipe-card {
+    @apply card hover:shadow-xl transition-shadow duration-300 cursor-pointer hover:border-primary-500/50;
+  }
+}

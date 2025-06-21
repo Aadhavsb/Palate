@@ -6,11 +6,13 @@ import { searchRecipeImage } from '../services/imageService';
 import { ApiResponse, AuthRequest, RecipeRequest, PaginationQuery, RecipeFilters } from '../types';
 
 // Generate recipe from text or image
-export const generateRecipeFromInput = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {
-  try {
+export const generateRecipeFromInput = async (req: AuthRequest, res: Response<ApiResponse>): Promise<void> => {  try {
     console.log('=== Recipe Generation Started ===');
     console.log('Request body:', req.body);
     console.log('File uploaded:', !!req.file);
+    console.log('Request headers X-User-Email:', req.headers['x-user-email']);
+    console.log('req.user:', req.user);
+    console.log('User ID will be:', req.user?.id || 'undefined');
     
     const { text, allergens = [], spiceLevel = 5 } = req.body;
     const image = req.file;

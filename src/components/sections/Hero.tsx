@@ -45,10 +45,11 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Content - Food Image */}
-          <div className="relative">            <div className="relative w-full h-96 lg:h-[600px] rounded-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-500">              <Image
-                src="/hero-food.jpg"
-                alt="Delicious gourmet meal"
+          {/* Right Content - Food Image */}          <div className="relative">
+            <div className="relative w-full h-96 lg:h-[600px] rounded-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              <Image
+                src="/160929101749-essential-spanish-dish-paella-phaidon.jpg"
+                alt="Essential Spanish dish paella"
                 fill
                 className="object-cover"
                 priority

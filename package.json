@@ -22,6 +22,7 @@
   "dependencies": {
     "@auth/mongodb-adapter": "^3.9.1",
     "@headlessui/react": "^2.2.4",
+    "@tailwindcss/postcss": "^4.1.8",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.15.24",
     "@types/react": "^19.1.6",
@@ -42,15 +43,12 @@
     "next-auth": "^4.24.11",
     "openai": "^4.103.0",
     "postcss": "^8.5.3",
+    "postcss-import": "^16.1.0",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
     "recharts": "^2.15.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.8",
-    "postcss-import": "^16.1.0"
   }
 }

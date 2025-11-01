@@ -3,8 +3,6 @@ import GoogleProvider from 'next-auth/providers/google'
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import { MongoClient } from 'mongodb'
 
-export const runtime = 'edge'
-
 const client = new MongoClient(process.env.MONGODB_URI!)
 const clientPromise = client.connect()
 
